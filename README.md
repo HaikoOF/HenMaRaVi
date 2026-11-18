@@ -27,8 +27,6 @@ Sistema completo de Gestão (ERP) desenvolvido em **Java 17 (Spring Boot 3 + JPA
 | **5.2 Três Functions (Variável, Tabela e Variável Tabela)** | `fn_CalcularTotalOS` (Escalar), `fn_BuscarOSPorCliente` (`RETURNS TABLE`) e `fn_RelatorioComissaoPorStatus` (`RETURNS @TabelaComissao TABLE`), consultadas em `/admin-bd`. |
 | **5.3 Backup e Restore do Banco de Dados (Bônus)** | Execução de `BACKUP DATABASE` e `RESTORE DATABASE` diretamente pela tela `/admin-bd` do sistema Java (`DatabaseAdminService.java`). |
 
-> 📄 **Documentação Acadêmica Completa (DER, Dicionário de Dados, Explicação das Entidades e Roteiro do Vídeo):** consulte o arquivo [`DOCUMENTACAO_ACADEMICA.md`](./DOCUMENTACAO_ACADEMICA.md) na raiz deste repositório.
-
 ---
 
 ## ⚙️ Como Instalar e Rodar o Projeto
