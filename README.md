@@ -52,7 +52,7 @@ Verifique o arquivo `src/main/resources/application.yml`:
 ```
 
 ### 3. Executando o Sistema
-Execute a classe `HenmaraviApplication.java` na sua IDE ou rode no terminal:
+Execute a classe `HenmaraviApplication.java` rodando no terminal:
 ```bash
 mvn spring-boot:run
 ```
