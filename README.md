@@ -1,68 +1,80 @@
-# Oficina de Mecânico ERP
+# Oficina de Mecânico ERP (HenMaRaVi ERP)
 
-Sistema completo de Gestão (ERP) desenvolvido para oficinas mecânicas, focado no controle de estoque de peças, ordem de serviço e emissão de faturamento financeiro.
+Sistema completo de Gestão (ERP) desenvolvido em **Java 17 (Spring Boot 3 + JPA/Hibernate)** integrado ao **Microsoft SQL Server**, voltado para oficinas mecânicas (controle de clientes, funcionários, mecânicos, veículos, estoque de peças, compras de fornecedores, ordens de serviço, auditoria automática e administração de banco de dados).
+
+---
 
 ## 🚀 Tecnologias Utilizadas
 - **Linguagem:** Java 17
-- **Framework Backend:** Spring Boot 3
-- **Persistência de Dados:** Spring Data JPA / Hibernate
-- **Banco de Dados:** Microsoft SQL Server
-- **Frontend e UI:** HTML5, CSS3, Bootstrap 5, Javascript Vanilla, Thymeleaf
-- **Arquitetura:** MVC (Model-View-Controller)
+- **Framework Backend:** Spring Boot 3.2.5 (Spring MVC, Spring Data JPA, Spring Security 6, Spring JDBC)
+- **Persistência de Dados:** Hibernate / JPA + JDBC Template (para chamada de Views, Procedures, Functions e Backup/Restore)
+- **Banco de Dados:** Microsoft SQL Server (`HenmaraviDB`)
+- **Frontend e UI:** HTML5, CSS3, Bootstrap 5.3, JavaScript, Thymeleaf + Layout Dialect
 
 ---
 
-## ⚙️ Como Instalar e Rodar o Projeto em Outro Computador
+## ✅ Atendimento aos Requisitos Acadêmicos (Seções 4 e 5)
 
-Para rodar este projeto em um novo computador, siga as instruções detalhadas abaixo:
+| Requisito | Implementação no Projeto |
+| :--- | :--- |
+| **Mínimo de 5 tabelas e relacionamento N x N** | **14 tabelas** no SQL Server (`pessoas`, `clientes`, `funcionarios`, `mecanicos`, `veiculos`, `pecas`, `servicos`, `compras`, `pecas_compras`, `ordens_servico`, `ordens_servico_pecas`, `ordens_servico_servicos`, `usuarios`, `logs_auditoria`) com **3 relacionamentos N x N** (`pecas_compras`, `ordens_servico_pecas`, `ordens_servico_servicos`). |
+| **Login/Logout e 3 níveis de permissão** | Autenticação no banco (`usuarios`) com 3 perfis: **Administrador (`ADMIN`)** com controle total, **Operacional da Oficina (`ATENDENTE`)** com visão operacional de atendimento, e **Mecânico (`MECANICO`)** restrito à execução de O.S. e consultas técnicas (`/acesso-negado` para rotas restritas). |
+| **4.1 Interfaces: Login, Gestão de Contas, Lembrete de Senha, Perfil e Logs** | Telas dedicadas em `/login`, `/usuarios` (criação e gestão de contas exclusiva do Admin), `/lembrete-senha`, `/perfil` (edição de perfil do usuário logado) e `/logs` (auditoria com motivo e responsável pelas exclusões). |
+| **4.2 Pacote `entity` com Annotations JPA** | Todas as 14 classes no pacote `com.henmaravi.erp.entity` mapeadas com `@Entity`, `@Table`, `@Id`, `@Inheritance(JOINED)`, `@ManyToOne`, `@EmbeddedId` e `@MapsId`. |
+| **5.2 Três Stored Procedures com Transação** | `sp_FinalizarOrdemServico`, `sp_ReajustarPrecoPecas` e `sp_RegistrarCompraRapida`, chamadas pela interface Java em `/admin-bd`. |
+| **5.2 Três Consultas Complexas via Views** | `vw_ResumoOrdensServico`, `vw_DesempenhoMecanicos` e `vw_AnaliseEstoquePecas`, exibidas em tempo real em `/admin-bd`. |
+| **5.2 Três Triggers disparados pelo Java** | `trg_AuditoriaStatusOS`, `trg_ValidarEAuditarItemOSPeca` e `trg_AuditoriaItemCompra`, validando estoque e gravando em `logs_auditoria`. |
+| **5.2 Três Functions (Variável, Tabela e Variável Tabela)** | `fn_CalcularTotalOS` (Escalar), `fn_BuscarOSPorCliente` (`RETURNS TABLE`) e `fn_RelatorioComissaoPorStatus` (`RETURNS @TabelaComissao TABLE`), consultadas em `/admin-bd`. |
+| **5.3 Backup e Restore do Banco de Dados (Bônus)** | Execução de `BACKUP DATABASE` e `RESTORE DATABASE` diretamente pela tela `/admin-bd` do sistema Java (`DatabaseAdminService.java`). |
 
-### 1. Pré-Requisitos
-Você precisará ter instalado na sua máquina:
-- **Java 17 (JDK 17)** ou superior.
-- **Maven** (Opcional se usar uma IDE).
-- **SQL Server** e **SSMS** (SQL Server Management Studio).
-- **IDE Java** (Eclipse, IntelliJ IDEA ou VS Code).
+> 📄 **Documentação Acadêmica Completa (DER, Dicionário de Dados, Explicação das Entidades e Roteiro do Vídeo):** consulte o arquivo [`DOCUMENTACAO_ACADEMICA.md`](./DOCUMENTACAO_ACADEMICA.md) na raiz deste repositório.
 
-### 2. Configurando o Banco de Dados (SQL Server)
-1. Abra o seu SSMS (SQL Server Management Studio).
-2. Conecte-se ao seu servidor local (localhost).
-3. Crie o banco de dados vazio rodando o seguinte comando:
+---
+
+## ⚙️ Como Instalar e Rodar o Projeto
+
+### 1. Configurando o Banco de Dados (SQL Server)
+1. Abra o **SSMS (SQL Server Management Studio)** e conecte-se ao seu servidor `localhost`.
+2. Crie o banco de dados (caso ainda não exista):
    ```sql
    CREATE DATABASE HenmaraviDB;
+   GO
    ```
-4. Em seguida, pegue o arquivo **`database.sql`** (que está na raiz deste projeto) e rode ele dentro do SSMS. Ele já contém a criação de todas as tabelas (CREATE TABLE) e a injeção dos 10 registros de teste (INSERT) para deixar o sistema totalmente populado e pronto para uso.
+3. Abra e execute o arquivo **`database.sql`** (localizado na raiz do projeto). Ele criará todas as **tabelas**, fará a **injeção de dados iniciais (`INSERT`)**, e criará as **3 Views, 3 Functions, 3 Triggers e 3 Stored Procedures**.
 
-### 3. Configurando as Credenciais (Application.yml)
-1. Abra este projeto na sua IDE.
-2. Navegue até o arquivo `src/main/resources/application.yml`.
-3. Verifique as credenciais do seu banco de dados na seção `datasource`:
-   ```yaml
-   username: sa
-   password: YourStrong!Password #
-   ```
-   *(Atenção: O Hibernate já está configurado com `ddl-auto: update`, mas como você executou o `database.sql` no passo anterior, ele não tentará recriar as tabelas).*
-- Professor, nós sabemos que o Spring Boot pode criar as tabelas sozinho porque deixamos o ddl-auto: update ligado. Porém, como pedimos para o senhor rodar o arquivo database.sql primeiro (para injetar os dados de teste), quando o sistema ligar, o Hibernate vai ver que as tabelas já existem e não vai tentar recriá-las nem causar conflito."
+### 2. Configurando as Credenciais (`application.yml`)
+Verifique o arquivo `src/main/resources/application.yml`:
+```yaml
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=HenmaraviDB;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: 1234
+```
 
-### 4. Executando o Sistema
-1. Na sua IDE, localize a classe principal: `HenmaraviErpApplication.java`.
-2. Clique com o botão direito e escolha **Run (Executar)**.
-3. Se estiver usando o terminal, digite: `mvn spring-boot:run`.
-4. Aguarde a mensagem "Started" no console.
-5. Abra o navegador e acesse a URL oficial do sistema:
-   👉 **`http://localhost:8080`**
-
-### 5. Dados de Login (Usuário de Teste)
-Para acessar o sistema via tela de Autenticação (Login), utilize a credencial padrão configurada no Spring Security:
-- **Usuário:** admin
-- **Senha:** 123
+### 3. Executando o Sistema
+Execute a classe `HenmaraviApplication.java` na sua IDE ou rode no terminal:
+```bash
+mvn spring-boot:run
+```
+Acesse no navegador: **`http://localhost:8080`**
 
 ---
 
-## 📦 Módulos Principais do ERP
-1. **Autenticação:** Segurança aplicada, bloqueando rotas sem login.
-2. **Dashboard de Bordo:** Painel visual com cards financeiros somando totais de faturamento e chamados abertos.
-3. **Módulo de Pessoas:** Herança implementada no banco (`Pessoa` -> `Cliente`, `Funcionário`, `Mecânico`).
-4. **Módulo de Veículos:** Vinculação de automóveis a clientes da base.
-5. **Estoque e Catálogo:** Gestão do estoque físico de Peças e precificação de Mão de Obra (Serviços).
-6. **Módulo de Compras (Entrada):** Formulário dinâmico para dar entrada em nota fiscal e alimentar o estoque físico automaticamente.
-7. **Ordem de Serviço (O.S.):** Coração do ERP. Tela robusta com cabeçalho de cliente/carro e adição iterativa (Modais) de Peças e Serviços, abatendo estoque simultaneamente.
+## 🔐 Credenciais de Acesso (3 Níveis de Permissão)
+
+| Nível / Perfil | Usuário | Senha | Permissões e Visualização |
+| :--- | :--- | :--- | :--- |
+| **1. Administrador (`ADMIN`)** | `admin` | `123` | **Acesso Total:** Criação/gestão de contas (`/usuarios`), Folha de Funcionários (`/funcionarios`), Gestão de Mecânicos (`/mecanicos`), Gestão de Clientes, Veículos, Estoque e Serviços, Entrada de Estoque (`/compras`), Logs de Exclusão (`/logs`) e Central DBA & Backup (`/admin-bd`). |
+| **2. Operacional da Oficina (`ATENDENTE`)** | `atendente` | `123` | **Visão Operacional:** Abertura e execução de Ordens de Serviço (`/ordens-servico`), Cadastro e consulta de Clientes (`/clientes`) e Veículos (`/veiculos`), Consulta de Estoque de Peças (`/estoque`) e Catálogo de Serviços (`/servicos`). Sem acesso a Funcionários, Compras ou Admin BD. |
+| **3. Mecânico (`MECANICO`)** | `mecanico` | `123` | **Visão de Bancada:** Abertura e execução de Ordens de Serviço (`/ordens-servico`), consulta de Veículos (`/veiculos`) e Serviços (`/servicos`). Bloqueado para gestão de mecânicos, clientes, estoque, compras e administração. |
+
+---
+
+## 🛡️ Regras de Negócio e Diferenciais Implementados
+
+- **Criação de Contas Exclusiva pelo Admin (`/usuarios`):** Não há auto-cadastro público; somente usuários com perfil `ADMIN` podem criar, editar, ativar/desativar e excluir contas do sistema.
+- **Reaproveitamento Inteligente de `Pessoa` (Herança `JOINED`):** Caso uma pessoa já cadastrada no banco (ex.: um `Mecanico`) passe a atuar também como `Cliente` ou `Funcionario` (ou vice-versa), o sistema reutiliza o `codigo` (`PK`) existente na tabela `pessoas` e insere apenas a chave estrangeira na tabela filha correspondente, preservando a restrição `UNIQUE` do CPF. Ao excluir apenas um dos papéis, o registro base em `pessoas` é mantido enquanto houver vínculo em outra tabela filha.
+- **Auditoria Obrigatória de Exclusões (`/logs`):** Toda exclusão no sistema exige um **motivo obrigatório** e captura automaticamente o **usuário logado** (`SecurityContextHolder`), registrando os detalhes na tabela `logs_auditoria`.
+- **Estorno Automático de Estoque em Compras (`/compras`):** Ao remover um item de uma nota de entrada ou excluir uma Compra inteira, a quantidade comprada é automaticamente subtraída de `pecas.estoque` e registrada na aba de **Logs e Exclusões (`/logs`)**.
+- **Tratamento Amigável de Erros (`GlobalExceptionHandler`) e Cascata Opcional:** Exceções de integridade referencial (`FK`) e unicidade (`UNIQUE`) do SQL Server são traduzidas para mensagens claras em português informando exatamente quais registros estão vinculados, com opção de **forçar exclusão removendo vínculos** no modal de confirmação.
+- **Testes de Integração Automatizados:** A suíte [`CrudAndRulesIntegrationTest.java`](./src/test/java/com/henmaravi/erp/CrudAndRulesIntegrationTest.java) valida automaticamente o fluxo de edição, exclusão, reaproveitamento de `Pessoa`, estorno de estoque e geração de logs.
