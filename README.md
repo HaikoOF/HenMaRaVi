@@ -13,19 +13,19 @@ Sistema completo de Gestão (ERP) desenvolvido em **Java 17 (Spring Boot 3 + JPA
 
 ---
 
-## ✅ Atendimento aos Requisitos Acadêmicos (Seções 4 e 5)
+## ✅ Atendimento aos Requisitos Acadêmicos 
 
 | Requisito | Implementação no Projeto |
 | :--- | :--- |
 | **Mínimo de 5 tabelas e relacionamento N x N** | **14 tabelas** no SQL Server (`pessoas`, `clientes`, `funcionarios`, `mecanicos`, `veiculos`, `pecas`, `servicos`, `compras`, `pecas_compras`, `ordens_servico`, `ordens_servico_pecas`, `ordens_servico_servicos`, `usuarios`, `logs_auditoria`) com **3 relacionamentos N x N** (`pecas_compras`, `ordens_servico_pecas`, `ordens_servico_servicos`). |
 | **Login/Logout e 3 níveis de permissão** | Autenticação no banco (`usuarios`) com 3 perfis: **Administrador (`ADMIN`)** com controle total, **Operacional da Oficina (`ATENDENTE`)** com visão operacional de atendimento, e **Mecânico (`MECANICO`)** restrito à execução de O.S. e consultas técnicas (`/acesso-negado` para rotas restritas). |
 | **4.1 Interfaces: Login, Gestão de Contas, Lembrete de Senha, Perfil e Logs** | Telas dedicadas em `/login`, `/usuarios` (criação e gestão de contas exclusiva do Admin), `/lembrete-senha`, `/perfil` (edição de perfil do usuário logado) e `/logs` (auditoria com motivo e responsável pelas exclusões). |
-| **4.2 Pacote `entity` com Annotations JPA** | Todas as 14 classes no pacote `com.henmaravi.erp.entity` mapeadas com `@Entity`, `@Table`, `@Id`, `@Inheritance(JOINED)`, `@ManyToOne`, `@EmbeddedId` e `@MapsId`. |
-| **5.2 Três Stored Procedures com Transação** | `sp_FinalizarOrdemServico`, `sp_ReajustarPrecoPecas` e `sp_RegistrarCompraRapida`, chamadas pela interface Java em `/admin-bd`. |
-| **5.2 Três Consultas Complexas via Views** | `vw_ResumoOrdensServico`, `vw_DesempenhoMecanicos` e `vw_AnaliseEstoquePecas`, exibidas em tempo real em `/admin-bd`. |
-| **5.2 Três Triggers disparados pelo Java** | `trg_AuditoriaStatusOS`, `trg_ValidarEAuditarItemOSPeca` e `trg_AuditoriaItemCompra`, validando estoque e gravando em `logs_auditoria`. |
-| **5.2 Três Functions (Variável, Tabela e Variável Tabela)** | `fn_CalcularTotalOS` (Escalar), `fn_BuscarOSPorCliente` (`RETURNS TABLE`) e `fn_RelatorioComissaoPorStatus` (`RETURNS @TabelaComissao TABLE`), consultadas em `/admin-bd`. |
-| **5.3 Backup e Restore do Banco de Dados (Bônus)** | Execução de `BACKUP DATABASE` e `RESTORE DATABASE` diretamente pela tela `/admin-bd` do sistema Java (`DatabaseAdminService.java`). |
+| **Pacote `entity` com Annotations JPA** | Todas as 14 classes no pacote `com.henmaravi.erp.entity` mapeadas com `@Entity`, `@Table`, `@Id`, `@Inheritance(JOINED)`, `@ManyToOne`, `@EmbeddedId` e `@MapsId`. |
+| **Três Stored Procedures com Transação** | `sp_FinalizarOrdemServico`, `sp_ReajustarPrecoPecas` e `sp_RegistrarCompraRapida`, chamadas pela interface Java em `/admin-bd`. |
+| **Três Consultas Complexas via Views** | `vw_ResumoOrdensServico`, `vw_DesempenhoMecanicos` e `vw_AnaliseEstoquePecas`, exibidas em tempo real em `/admin-bd`. |
+| **Três Triggers disparados pelo Java** | `trg_AuditoriaStatusOS`, `trg_ValidarEAuditarItemOSPeca` e `trg_AuditoriaItemCompra`, validando estoque e gravando em `logs_auditoria`. |
+| **Três Functions (Variável, Tabela e Variável Tabela)** | `fn_CalcularTotalOS` (Escalar), `fn_BuscarOSPorCliente` (`RETURNS TABLE`) e `fn_RelatorioComissaoPorStatus` (`RETURNS @TabelaComissao TABLE`), consultadas em `/admin-bd`. |
+| **Backup e Restore do Banco de Dados (Bônus)** | Execução de `BACKUP DATABASE` e `RESTORE DATABASE` diretamente pela tela `/admin-bd` do sistema Java (`DatabaseAdminService.java`). |
 
 ---
 
